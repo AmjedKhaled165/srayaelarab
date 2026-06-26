@@ -1,21 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { X } from "lucide-react";
-
-const GALLERY_ITEMS = [
-  { color: "from-primary/20 to-primary/5", label: "Interior" },
-  { color: "from-amber-500/20 to-amber-500/5", label: "Signature Dish" },
-  { color: "from-primary/15 to-primary/5", label: "Coffee Art" },
-  { color: "from-amber-600/20 to-amber-600/5", label: "Desserts" },
-  { color: "from-primary/25 to-primary/5", label: "Ambiance" },
-  { color: "from-amber-500/15 to-amber-500/5", label: "Bar" },
-  { color: "from-primary/20 to-transparent", label: "Events" },
-  { color: "from-amber-600/15 to-transparent", label: "Behind the Scenes" },
-];
+import { X, ImageIcon } from "lucide-react";
+import { useGallery } from "@/hooks/useGallery";
+import { GalleryImage } from "@/lib/types";
 
 export default function GallerySection() {
-  const [selected, setSelected] = useState<number | null>(null);
+  const { images, loading } = useGallery();
+  const [selected, setSelected] = useState<GalleryImage | null>(null);
 
   return (
     <section id="gallery" className="py-24 px-4 scroll-mt-16 bg-surface/50">
@@ -29,47 +21,71 @@ export default function GallerySection() {
           </p>
         </div>
 
-        <div className="columns-2 md:columns-3 lg:columns-4 gap-3 md:gap-4 space-y-3 md:space-y-4">
-          {GALLERY_ITEMS.map((item, i) => (
-            <button
-              key={i}
-              onClick={() => setSelected(i)}
-              className={`break-inside-avoid block w-full aspect-[${i % 3 === 0 ? "3/4" : "1"}] rounded-2xl bg-gradient-to-br ${item.color} border border-white/5 hover:border-primary/30 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] overflow-hidden group`}
-              style={{ aspectRatio: i % 3 === 0 ? "3/4" : "1" }}
-            >
-              <div className="w-full h-full flex items-center justify-center">
-                <span className="font-display text-xl md:text-2xl text-foreground/40 group-hover:text-primary/60 transition-colors">
-                  {item.label}
-                </span>
-              </div>
-            </button>
-          ))}
-        </div>
+        {loading ? (
+          <div className="columns-2 md:columns-3 lg:columns-4 gap-3 md:gap-4 space-y-3 md:space-y-4">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div
+                key={i}
+                className="break-inside-avoid rounded-2xl bg-surface animate-pulse"
+                style={{ aspectRatio: i % 3 === 0 ? "3/4" : "1" }}
+              />
+            ))}
+          </div>
+        ) : images.length === 0 ? (
+          <div className="text-center py-16 text-muted">
+            <ImageIcon size={48} className="mx-auto mb-3 opacity-40" />
+            <p>No photos in the gallery yet.</p>
+          </div>
+        ) : (
+          <div className="columns-2 md:columns-3 lg:columns-4 gap-3 md:gap-4 space-y-3 md:space-y-4">
+            {images.map((img) => (
+              <button
+                key={img.id}
+                onClick={() => setSelected(img)}
+                className="break-inside-avoid block w-full rounded-2xl overflow-hidden border border-white/5 hover:border-primary/30 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <img
+                  src={img.imageUrl}
+                  alt={img.label || "Gallery"}
+                  className="w-full h-auto object-cover"
+                />
+                {img.label && (
+                  <div className="p-3 bg-surface">
+                    <p className="text-xs text-muted">{img.label}</p>
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
-      {selected !== null && (
+      {selected && (
         <div
           className="fixed inset-0 z-50 bg-background/90 backdrop-blur-md flex items-center justify-center p-4"
           onClick={() => setSelected(null)}
         >
           <button
             onClick={() => setSelected(null)}
-            className="absolute top-4 right-4 text-foreground/60 hover:text-foreground p-2"
+            className="absolute top-4 right-4 text-foreground/60 hover:text-foreground p-2 z-10"
             aria-label="Close"
           >
             <X size={28} />
           </button>
           <div
-            className="max-w-2xl w-full aspect-square rounded-2xl bg-gradient-to-br"
-            style={{
-              backgroundImage: `linear-gradient(135deg, ${GALLERY_ITEMS[selected].color.replace("from-", "").replace("to-", "to-")})`,
-            }}
+            className="max-w-3xl w-full max-h-[90vh] rounded-2xl overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
           >
-            <div className="w-full h-full flex items-center justify-center">
-              <span className="font-display text-3xl text-foreground/60">
-                {GALLERY_ITEMS[selected].label}
-              </span>
-            </div>
+            <img
+              src={selected.imageUrl}
+              alt={selected.label || "Gallery"}
+              className="w-full h-auto max-h-[85vh] object-contain rounded-2xl"
+            />
+            {selected.label && (
+              <p className="text-center text-sm text-muted mt-3">
+                {selected.label}
+              </p>
+            )}
           </div>
         </div>
       )}

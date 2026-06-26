@@ -1,18 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { X, ArrowRight } from "lucide-react";
+import { X, ArrowRight, ImageIcon } from "lucide-react";
 import Link from "next/link";
-
-const GALLERY_PREVIEW = [
-  { color: "from-primary/20 to-primary/5", label: "Interior" },
-  { color: "from-amber-500/20 to-amber-500/5", label: "Signature Dish" },
-  { color: "from-primary/15 to-primary/5", label: "Coffee Art" },
-  { color: "from-amber-600/20 to-amber-600/5", label: "Desserts" },
-];
+import { useGallery } from "@/hooks/useGallery";
+import { GalleryImage } from "@/lib/types";
 
 export default function FeaturedGallery() {
-  const [selected, setSelected] = useState<number | null>(null);
+  const { images, loading } = useGallery();
+  const preview = images.slice(0, 4);
+  const [selected, setSelected] = useState<GalleryImage | null>(null);
 
   return (
     <section className="py-24 px-4 bg-surface/50">
@@ -34,21 +31,37 @@ export default function FeaturedGallery() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-          {GALLERY_PREVIEW.map((item, i) => (
-            <button
-              key={i}
-              onClick={() => setSelected(i)}
-              className="aspect-square rounded-2xl bg-gradient-to-br border border-white/5 hover:border-primary/30 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] overflow-hidden group"
-            >
-              <div className="w-full h-full flex items-center justify-center">
-                <span className="font-display text-lg md:text-xl text-foreground/40 group-hover:text-primary/60 transition-colors">
-                  {item.label}
-                </span>
-              </div>
-            </button>
-          ))}
-        </div>
+        {loading ? (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div
+                key={i}
+                className="aspect-square rounded-2xl bg-surface animate-pulse"
+              />
+            ))}
+          </div>
+        ) : preview.length === 0 ? (
+          <div className="text-center py-12 text-muted">
+            <ImageIcon size={36} className="mx-auto mb-2 opacity-40" />
+            <p className="text-sm">No photos yet.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+            {preview.map((img) => (
+              <button
+                key={img.id}
+                onClick={() => setSelected(img)}
+                className="aspect-square rounded-2xl overflow-hidden border border-white/5 hover:border-primary/30 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <img
+                  src={img.imageUrl}
+                  alt={img.label || "Gallery"}
+                  className="w-full h-full object-cover"
+                />
+              </button>
+            ))}
+          </div>
+        )}
 
         <div className="text-center mt-8 sm:hidden">
           <Link
@@ -60,25 +73,26 @@ export default function FeaturedGallery() {
         </div>
       </div>
 
-      {selected !== null && (
+      {selected && (
         <div
           className="fixed inset-0 z-50 bg-background/90 backdrop-blur-md flex items-center justify-center p-4"
           onClick={() => setSelected(null)}
         >
           <button
             onClick={() => setSelected(null)}
-            className="absolute top-4 right-4 text-foreground/60 hover:text-foreground p-2"
+            className="absolute top-4 right-4 text-foreground/60 hover:text-foreground p-2 z-10"
           >
             <X size={28} />
           </button>
-          <div className="max-w-lg w-full aspect-square rounded-2xl bg-gradient-to-br flex items-center justify-center"
-            style={{
-              backgroundImage: `linear-gradient(135deg, ${GALLERY_PREVIEW[selected].color.replace("from-", "").replace("to-", "to-")})`,
-            }}
+          <div
+            className="max-w-2xl w-full max-h-[85vh] rounded-2xl overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
           >
-            <span className="font-display text-2xl text-foreground/60">
-              {GALLERY_PREVIEW[selected].label}
-            </span>
+            <img
+              src={selected.imageUrl}
+              alt={selected.label || "Gallery"}
+              className="w-full h-auto object-contain rounded-2xl"
+            />
           </div>
         </div>
       )}

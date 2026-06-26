@@ -9,6 +9,7 @@ import {
   QrCode,
   LogOut,
   ArrowLeft,
+  ImageIcon,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -41,6 +42,7 @@ function AdminShell({ children }: { children: ReactNode }) {
   const navItems = [
     { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
     { href: "/admin/add", label: "Add Item", icon: PlusCircle },
+    { href: "/admin/gallery", label: "Gallery", icon: ImageIcon },
     { href: "/admin/qr", label: "QR Code", icon: QrCode },
   ];
 

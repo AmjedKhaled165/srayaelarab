@@ -17,6 +17,13 @@ export interface MenuItem {
   createdAt: number;
 }
 
+export interface GalleryImage {
+  id: string;
+  imageUrl: string;
+  label: string;
+  createdAt: number;
+}
+
 export interface CafeInfo {
   name: string;
   tagline: string;
