@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { X, ImageIcon } from "lucide-react";
+import { ImageIcon } from "lucide-react";
 import { useGallery } from "@/hooks/useGallery";
 import { GalleryImage } from "@/lib/types";
+import Lightbox from "./Lightbox";
 
 export default function GallerySection() {
   const { images, loading } = useGallery();
@@ -61,33 +62,11 @@ export default function GallerySection() {
       </div>
 
       {selected && (
-        <div
-          className="fixed inset-0 z-50 bg-background/90 backdrop-blur-md flex items-center justify-center p-4"
-          onClick={() => setSelected(null)}
-        >
-          <button
-            onClick={() => setSelected(null)}
-            className="absolute top-4 right-4 text-foreground/60 hover:text-foreground p-2 z-10"
-            aria-label="Close"
-          >
-            <X size={28} />
-          </button>
-          <div
-            className="max-w-3xl w-full max-h-[90vh] rounded-2xl overflow-hidden"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <img
-              src={selected.imageUrl}
-              alt={selected.label || "Gallery"}
-              className="w-full h-auto max-h-[85vh] object-contain rounded-2xl"
-            />
-            {selected.label && (
-              <p className="text-center text-sm text-muted mt-3">
-                {selected.label}
-              </p>
-            )}
-          </div>
-        </div>
+        <Lightbox
+          src={selected.imageUrl}
+          alt={selected.label}
+          onClose={() => setSelected(null)}
+        />
       )}
     </section>
   );

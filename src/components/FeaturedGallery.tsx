@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { X, ArrowRight, ImageIcon } from "lucide-react";
+import { ArrowRight, ImageIcon } from "lucide-react";
 import Link from "next/link";
 import { useGallery } from "@/hooks/useGallery";
 import { GalleryImage } from "@/lib/types";
+import Lightbox from "./Lightbox";
 
 export default function FeaturedGallery() {
   const { images, loading } = useGallery();
@@ -74,27 +75,11 @@ export default function FeaturedGallery() {
       </div>
 
       {selected && (
-        <div
-          className="fixed inset-0 z-50 bg-background/90 backdrop-blur-md flex items-center justify-center p-4"
-          onClick={() => setSelected(null)}
-        >
-          <button
-            onClick={() => setSelected(null)}
-            className="absolute top-4 right-4 text-foreground/60 hover:text-foreground p-2 z-10"
-          >
-            <X size={28} />
-          </button>
-          <div
-            className="max-w-2xl w-full max-h-[85vh] rounded-2xl overflow-hidden"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <img
-              src={selected.imageUrl}
-              alt={selected.label || "Gallery"}
-              className="w-full h-auto object-contain rounded-2xl"
-            />
-          </div>
-        </div>
+        <Lightbox
+          src={selected.imageUrl}
+          alt={selected.label}
+          onClose={() => setSelected(null)}
+        />
       )}
     </section>
   );
