@@ -1,12 +1,11 @@
 import { DEFAULT_CAFE_INFO } from "@/utils/constants";
 import { ChevronDown } from "lucide-react";
+import Link from "next/link";
 
 export default function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      <div
-        className="absolute inset-0 bg-gradient-to-br from-background via-background to-surface-light"
-      />
+      <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-surface-light" />
 
       <div
         className="absolute inset-0 opacity-20"
@@ -29,20 +28,25 @@ export default function HeroSection() {
           {DEFAULT_CAFE_INFO.tagline}
         </p>
 
-        <a
-          href="#menu"
-          className="inline-flex items-center gap-2 px-8 py-3 bg-primary text-background font-medium rounded-full hover:bg-primary-light transition-all active:scale-95"
-        >
-          Explore Our Menu
-        </a>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <Link
+            href="/menu"
+            className="inline-flex items-center gap-2 px-8 py-3 bg-primary text-background font-medium rounded-full hover:bg-primary-light transition-all active:scale-95"
+          >
+            Explore Our Menu
+          </Link>
+          <Link
+            href="/gallery"
+            className="inline-flex items-center gap-2 px-8 py-3 border border-primary/40 text-primary font-medium rounded-full hover:bg-primary/10 transition-all active:scale-95"
+          >
+            View Gallery
+          </Link>
+        </div>
       </div>
 
-      <a
-        href="#menu"
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 text-muted hover:text-primary transition-colors animate-bounce"
-      >
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-muted hover:text-primary transition-colors animate-bounce">
         <ChevronDown size={28} />
-      </a>
+      </div>
     </section>
   );
 }
